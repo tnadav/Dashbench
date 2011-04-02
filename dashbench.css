@@ -1,0 +1,46 @@
+body {
+	font-size: 16px;
+	font-family: georgia, sans-serif;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+table td {
+	margin: 0px;
+	padding: 0.35em 0.35em 0.35em 0.35em;
+	border: 0.125em solid #EEEEEE;
+}
+
+table tr {
+	background-color: #95A9BA;
+	background: -webkit-gradient(linear, left top, left bottom, from(#A6BACB), to(#8498A9));
+	background: -moz-linear-gradient(top,  #A6BACB,  #8498A9);
+}
+
+table tr:nth-child(2) {
+	background-color: #8498A9;
+	background: -webkit-gradient(linear, left top, left bottom, from(#8498A9), to(#627697));
+	background: -moz-linear-gradient(top,  #8498A9,  #627697);
+}
+
+table thead td {
+	background-color: #B9EDFC;
+	background: -webkit-gradient(linear, left top, left bottom, from(#c8dced), to(#A6BACB));
+	background: -moz-linear-gradient(top,  #c8dced,  #A6BACB);
+	font-weight: bold;
+}
+
+ol#dp-tests li {
+	background-color: #CCCCCC;
+	padding: 1em;
+	-moz-border-radius: 1.5em;
+	-webkit-border-radius: 1.5em;
+	border-radius: 2em;
+}
+
+ol#dp-tests li h3 {
+	margin: 0em 0em 0.125em 0.125em;
+}
