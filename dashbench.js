@@ -7,7 +7,7 @@
 
 	Programmed by Nadav Tenenebaum
 	
-	This program is Released under the MIT license
+	This program is released under the MIT license
 	
 	----------------------------------------------------------------------------
 	Copyright (C) 2011 by Nadav Tenenbaum
