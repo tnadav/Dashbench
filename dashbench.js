@@ -2,7 +2,7 @@
 	DashBench
 	------------
 
-	Dashbench is a benchmarking suite that benchmark different functions with
+	Dashbench is a JavaScript performance suite that benchmark different functions with
 	different arguments, and organize the results in a table.
 
 	Programmed by Nadav Tenenebaum
