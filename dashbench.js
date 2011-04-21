@@ -32,11 +32,14 @@
 */
 
 (function Dash_Bench_initialization() {
-	// The profiling interface
-	var benchQueue	= [],
+	// Private variables
+	var benchQueue		= [],
 		benchmarks		= [],
-		results			= [];
+		results			= [],
+		algorithms		= [];			// Stores benchmarking algorithms. Adds the ability
+										//	to create deshbench plugins.
 	
+	// The profiling interface
 	/**
 	 * @name db
 	 * @namespace Dashbench frontend. Used to interact with the dashbench benchmarking suite
@@ -45,7 +48,7 @@
 	 */
 	var db = {
 		/**
-		 * @name dp.theme
+		 * @name db.theme
 		 * @function
 		 * @public
 		 * @description Defines a theme to be benchmarked
@@ -55,28 +58,28 @@
 		 *		@param {Callback} callback A callback funcntion which is used to nest inside
 		 * 			the theme all the functions to be benchmarked
 		 * @exemple
-		 * dp.theme('Adding vs. subtracting', [[''], [1] , ['1'], ['', 1, '1']], 1000, function() {
-		 * 	dp.bench('Adding', function() {
+		 * db.theme('Adding vs. subtracting', [[''], [1] , ['1'], ['', 1, '1']], 1000, function() {
+		 * 	db.bench('Adding', function() {
 		 * 		for (var i = 0; i < 1000000; i++);
 		 * 	});
-		 * 	dp.bench('subtracting', function() {
+		 * 	db.bench('subtracting', function() {
 		 *		for (var i = 1000000; i > 0; i--);
 		 * 	});
 		 * });
 		 */
-		'theme': function theme(description, values, times, callback) {
+		'theme': function db_theme(description, values, callback, algorithmHandler) {
 			if(values == null || values == '')
 				values = [[]];
-			callback.__DP_id	= benchmarks.push({
-												'values': 		values,
-												'times': 		times,
-												'description': 	description
+			callback.__DB_id	= benchmarks.push({
+												'values': 			values,
+												'description': 		description,
+												'algorithmHandler':  algorithmHandler
 												}) - 1;
-			results[callback.__DP_id] = [];
+			results[callback.__DB_id] = [];
 			callback();
 		},
 		/**
-		 * @name dp.bench
+		 * @name db.bench
 		 * @function
 		 * @public
 		 * @description Benchmark a specific function inside a theme wanted to be compared.
@@ -86,45 +89,52 @@
 		 * 			used on the rendered table.
 		 *		@param {Callback} callback The function to be benchmraked
 		 */
-		'bench': function bench(description, callback) {
-			callback.__DP_description	= description;
-			callback.__DP_pid			= bench.caller.__DP_id;
-			callback.__DP_id			= results[callback.__DP_pid].push({
+		'bench': function db_bench(description, callback) {
+			callback.__DB_description	= description;
+			callback.__DB_pid			= db_bench.caller.__DB_id;
+			callback.__DB_id			= results[callback.__DB_pid].push({
 																	'description': description,
 																	'values': []
 																	}) - 1;
-			var numberOfValues			= benchmarks[callback.__DP_pid].values.length;
-			for(i = 0; i < numberOfValues; ++i) {
-				// Using closure to pass the values array by value, not reference
-				(function(values) {
-					callback.__DP_values = values;
-					benchQueue.push(callback);
-				})(benchmarks[callback.__DP_pid].values[i]);
-			}
+			benchQueue.push(callback);
+		},
+		'use': function db_use(algorithmId, options) {
+			return new algorithms[algorithmId](options);
+		},
+		'addAlgorithm': function db_addAlgorithm(symbol, algorithm) {
+			db[symbol] = algorithms.push(algorithm);
 		}
 	}
 	// The profiling engine
+	// Private variables:
+	var callbackIndex	= 0,
+		valuesIndex		= 0;
 	function runBenchQueue() {
-		var callback	= benchQueue.shift();
+		var bench		= benchmarks[benchQueue[callbackIndex].__DB_pid];
+		if(valuesIndex >= bench.values.length) {
+			++callbackIndex;
+			valuesIndex = 0;
+		}
+		var callback		= benchQueue[callbackIndex];
 		if(typeof callback == 'undefined')
 			return;
 
-		var bench		= benchmarks[callback.__DP_pid],
-			counter		= 0;
-		var interval	= window.setInterval(function() {
-							callback.apply(window, callback.__DP_values);
-							counter++;
-						}, 1);
-		var timeOut 	= window.setTimeout(function() {
-							window.clearInterval(interval);
-							results[callback.__DP_pid][callback.__DP_id].values.push({
-																				'values': callback.__DP_values.toString(),
-																				'time': counter
-																				});
-							printResults();
-							delete counter;
-							runBenchQueue();
-						}, bench.times);
+		var bench				= benchmarks[callback.__DB_pid],
+			counter				= 0, 
+			callbackValues		= benchmarks[callback.__DB_pid].values[valuesIndex],
+			algorithmHandler	= bench.algorithmHandler || db.use(0, {});
+		
+		algorithmHandler.onResult(function(result) {
+			results[callback.__DB_pid][callback.__DB_id].values.push({
+																'values': callbackValues.toString(),
+																'time': result
+																});
+			printResults();
+			valuesIndex++;
+			runBenchQueue();
+		});
+
+		algorithmHandler.benchmark(callback, callbackValues);
 	}
 
 	function printResults() {
