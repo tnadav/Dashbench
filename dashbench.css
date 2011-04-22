@@ -35,10 +35,11 @@ table thead td {
 
 ol#dp-tests li {
 	background-color: #CCCCCC;
-	padding: 1em;
+	padding: 0.5em;
 	-moz-border-radius: 1.5em;
-	-webkit-border-radius: 1.5em;
-	border-radius: 2em;
+	-webkit-border-radius: 1em;
+	border-radius: 1em;
+	margin-bottom: 0.25em;
 }
 
 ol#dp-tests li h3 {

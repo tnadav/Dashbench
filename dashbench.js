@@ -68,6 +68,7 @@
 		 * });
 		 */
 		'theme': function db_theme(description, values, callback, algorithmHandler) {
+			console.log(algorithmHandler);
 			if(values == null || values == '')
 				values = [[]];
 			callback.__DB_id	= benchmarks.push({
@@ -102,7 +103,7 @@
 			return new algorithms[algorithmId](options);
 		},
 		'addAlgorithm': function db_addAlgorithm(symbol, algorithm) {
-			db[symbol] = algorithms.push(algorithm);
+			db[symbol] = algorithms.push(algorithm) - 1;
 		}
 	}
 	// The profiling engine
@@ -134,7 +135,7 @@
 			runBenchQueue();
 		});
 
-		algorithmHandler.benchmark(callback, callbackValues);
+		setTimeout(function() {algorithmHandler.benchmark(callback, callbackValues)}, 0);
 	}
 
 	function printResults() {

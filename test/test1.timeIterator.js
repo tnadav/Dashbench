@@ -15,4 +15,4 @@ db.theme('Adding vs. Substacting (time Itaretions plugin)', [[''], [1] , ['1'], 
 		}
 		
 	});
-}, db.use(db.TIMEITERATOR, {'time':2024}));
+}, db.use(db.TIMEITERATOR, {'iterations':45}));

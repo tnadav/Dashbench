@@ -15,7 +15,8 @@
 (function Dash_Bench_Time_Iterations_Plugin_initialization() {
 	function TimeIterator(options) {
 		// Number of default iterations: 1
-		//	Generally you will use something like 1000
+		//	Generally you will use something like 5 for slow tests, 100 for
+		//	moderate tests and 500 for fast tests
 		//	The default is 1 in order to prevent unintentional browser hang
 		//	caused by forgetting to adjust the number of iterations 
 		this.iterations = options.iterations | 1;
@@ -29,7 +30,6 @@
 		// Define variables in order the perform the benchmark
 		var totalTime,
 			iterations = this.iterations;
-		
 		// Get the time before performing the benchmark in ms	
 		var start	= (new Date).getTime();	
 		

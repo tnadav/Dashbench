@@ -13,8 +13,7 @@
 	function RunsPerSec(options) {
 		// Time in milliseconds to perform the benchmark
 		//	Defaults to one second
-		console.dir(options);
-		this.time = options.time | 1000;
+		this.time = options.time || 1000;
 	}
 
 	RunsPerSec.prototype.onResult = function RunsPerSec_onResult(callback) {
@@ -24,21 +23,30 @@
 	}
 
 	RunsPerSec.prototype.benchmark = function RunsPerSec_benchmark(callback, values) {
-		var	counter = 0
-			that	= this,
+		var	totalTime	= 0;
+		var start 		= (new Date).getTime();
+		
+		for(var counter = 0; totalTime < this.time; counter++) {
+			callback.apply(window, values);
+			totalTime = (new Date).getTime() - start;
+		}
+		
+		// Convert the result into runs per second (and not per this.time milliseconds)
+		counter /= this.time / 1000;
+		this.onResultCallback(counter + ' runs/s');
+		/*
 			// Benchmark is performed in itervals
 			interval = window.setInterval(function() {
 							callback.apply(window, values);
 							counter++;
 						}, 0);
 		// Interrupt the benchmark after this.time milliseconds
-		console.log('this.time: '+this.time);
 		window.setTimeout(function() {
 			window.clearInterval(interval);
 			// Convert the result into runs per second (and not per this.time milliseconds)
 			counter /= that.time / 1000;
 			that.onResultCallback(counter + ' runs/s');
-		}, this.time);
+		}, this.time);*/
 	}
 
 	db.addAlgorithm('RUNSPERSEC', RunsPerSec);
